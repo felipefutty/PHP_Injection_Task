@@ -1,5 +1,5 @@
 ## Background
-Um site genérico possui uma base de usuários, permitindo que os mesmo se autentiquem no site acessando sua página pessoal, através do mecanismo clássico de login/senha. Além disso, o site permite que novos usuários se cadastrem no sistema, tendo acesso a sua página pessoal. Para controle do sistema, existe página especial de autenticação somente para os usuários cadastrados como administrador. Todas essas páginas podem ser encontradas através do link inicial do site: [Site Generico](http://localhost/Test/index.php)
+Um site genérico possui uma base de usuários, permitindo que os mesmo se autentiquem no site acessando sua página pessoal, através do mecanismo clássico de login/senha. Além disso, o site permite que novos usuários se cadastrem no sistema, tendo acesso a sua página pessoal. Para controle do sistema, existe página especial de autenticação somente para os usuários cadastrados como administrador. Todas essas páginas podem ser encontradas através do link inicial do site: [Site Generico](http://143.106.73.88/sqlinjection/index.php)
 
 O site foi realizado por uma empresa tercerizado e, após algum período da aplicação no mercado, foi constatado por clientes que suas contas foram invadidas. Dessa forma, a empresa proprietária do site contratou uma empresa para verificar o problema de vazamento.
 
