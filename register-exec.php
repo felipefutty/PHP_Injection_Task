@@ -12,32 +12,27 @@
 	$errflag = false;
 	
 	//Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Falha ao concectar ao servidor: ' . mysql_error());
+	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
+	if ($mysqli->connect_errno) {
+    	die("Falha ao conectar ao servidor MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 	}
 	
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Nao conseguiu selecionar database");
-	}
 	
 	//Function to sanitize values received from the form. Prevents SQL injection
-	function clean($str) {
+	function clean($str, $my) {
 		$str = @trim($str);
 		if(get_magic_quotes_gpc()) {
 			$str = stripslashes($str);
 		}
-		return mysql_real_escape_string($str);
+		return $my->real_escape_string($str);
 	}
 	
 	//Sanitize the POST values
-	$fname = clean($_POST['fname']);
-	$lname = clean($_POST['lname']);
-	$login = clean($_POST['login']);
-	$password = clean($_POST['password']);
-	$cpassword = clean($_POST['cpassword']);
+	$fname = clean($_POST['fname'], $mysqli);
+	$lname = clean($_POST['lname'], $mysqli);
+	$login = clean($_POST['login'], $mysqli);
+	$password = clean($_POST['password'], $mysqli);
+	$cpassword = clean($_POST['cpassword'], $mysqli);
 	
 	//Input Validations
 	if($fname == '') {
@@ -68,13 +63,13 @@
 	//Check for duplicate login ID
 	if($login != '') {
 		$qry = "SELECT * FROM members WHERE login='$login'";
-		$result = mysql_query($qry);
-		if($result) {
-			if(mysql_num_rows($result) > 0) {
+		if ($result = $mysqli->query($qry)) {
+			if($result->num_rows > 0) {
 				$errmsg_arr[] = 'Login em uso, tente outro';
 				$errflag = true;
 			}
-			@mysql_free_result($result);
+			//@mysql_free_result($result);
+			$result->free();
 		}
 		else {
 			die("Query falhou");
@@ -91,10 +86,10 @@
 
 	//Create INSERT query
 	$qry = "INSERT INTO members(firstname, lastname, login, passwd) VALUES('$fname','$lname','$login','".md5($_POST['password'])."')";
-	$result = @mysql_query($qry);
+	//$result = @mysql_query($qry);
 	
 	//Check whether the query was successful or not
-	if($result) {
+	if($result = $mysqli->query($qry)) {
 		header("location: register-success.php");
 		exit();
 	}else {
