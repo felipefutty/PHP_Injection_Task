@@ -12,29 +12,23 @@
 	$errflag = false;
 	
 	//Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
-	
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
+	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
+	if ($mysqli->connect_errno) {
+    	die("Falha ao conectar ao servidor MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 	}
 	
 	//Function to sanitize values received from the form. Prevents SQL injection
-	function clean($str) {
+	function clean($str, $my) {
 		$str = @trim($str);
 		if(get_magic_quotes_gpc()) {
 			$str = stripslashes($str);
 		}
-		return mysql_real_escape_string($str);
+		return $my->real_escape_string($str);
 	}
 	
 	//Sanitize the POST values
-	$login = clean($_POST['login']);
-	$password = clean($_POST['password']);
+	$login = clean($_POST['login'], $mysqli);
+	$password = clean($_POST['password'], $mysqli);
 	
 	//Input Validations
 	if($login == '') {
@@ -56,18 +50,22 @@
 	
 	//Create query
 	$qry="SELECT * FROM members,adm WHERE adm.member_id=members.member_id AND members.login='$login' AND members.passwd='".md5($_POST['password'])."'";
-	//echo $qry;
-	$result=mysql_query($qry);
 
-	//Check whether the query was successful or not
-	if($result) {
-		if(mysql_num_rows($result) == 1) {
+	// Query
+	//if (!$mysqli->multi_query($qry)) {
+    	//die("Falha na query: (" . $mysqli->errno . ") " . $mysqli->error);
+	//}
+
+	if ($result = $mysqli->query($qry)) {
+		//echo $result->num_rows;
+		if($result->num_rows == 1) {
 			//Login Successful
 			session_regenerate_id();
-			$member = mysql_fetch_assoc($result);
-			$_SESSION['SESS_MEMBER_ID'] = $member['member_id'];
-			$_SESSION['SESS_FIRST_NAME'] = $member['firstname'];
-			$_SESSION['SESS_LAST_NAME'] = $member['lastname'];
+
+			$member = $result->fetch_all(MYSQLI_ASSOC);
+			$_SESSION['SESS_MEMBER_ID'] = $member[0]['member_id'];
+			$_SESSION['SESS_FIRST_NAME'] = $member[0]['firstname'];
+			$_SESSION['SESS_LAST_NAME'] = $member[0]['lastname'];
 			session_write_close();
 			header("location: member-adm-index.php");
 			exit();
