@@ -16,7 +16,7 @@ O site forneceu todo código usado pelo sistema através desse projeto github. E
 Conseguir replicar os ataques citados acima usando ``injection``. Além disso, realizar um sucinto relatório de como foi realizado o ataque e estratégias possíveis para solução do problema encontradado.
 
 ## Solução
-Primeiramente, o aluno deveria notar que única página que aceita ``SQL injection`` é a página de [login do membro] (http://143.106.73.88/sqlinjection/login-form.php). Então, ela seria o ponto de vazamento para conseguir executar qualquer SQl no site. As soluções seriam:
+Primeiramente, o aluno deveria notar que única página que aceita ``SQL injection`` é a página de login de membro. Então, essa seria o ponto de vazamento para conseguir executar qualquer SQl no site. As soluções para cada tarefa ficariam da seguinte forma:
 
 1. Para acessar como qualquer usuário, o usuário deveria usar a seguinte entrada no campo de ``login``:
 
